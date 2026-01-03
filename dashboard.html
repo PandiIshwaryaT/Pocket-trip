@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Pocket-Trip</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-globe-americas"></i>
+                    <h1>Pocket-Trip</h1>
+                </div>
+                <button class="sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <div class="user-profile">
+                <div class="user-avatar">
+                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="User Avatar">
+                </div>
+                <div class="user-info">
+                    <h3>Alex Johnson</h3>
+                    <p>Travel Enthusiast</p>
+                </div>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <ul>
+                    <li class="active">
+                        <a href="dashboard.html">
+                            <i class="fas fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="my-trips.html">
+                            <i class="fas fa-suitcase"></i>
+                            <span>My Trips</span>
+                            <span class="badge">3</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="create-trip.html">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Plan New Trip</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="city-search.html">
+                            <i class="fas fa-search"></i>
+                            <span>Explore Cities</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="activity-search.html">
+                            <i class="fas fa-binoculars"></i>
+                            <span>Find Activities</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="budget.html">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>Budget Overview</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="calendar.html">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Calendar</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="share-trip.html">
+                            <i class="fas fa-share-alt"></i>
+                            <span>Shared Trips</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="sidebar-section">
+                    <h4>Account</h4>
+                    <ul>
+                        <li>
+                            <a href="profile.html">
+                                <i class="fas fa-user-cog"></i>
+                                <span>Profile Settings</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="help.html">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Help & Support</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="index.html">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search trips, cities, activities...">
+                </div>
+                <div class="top-bar-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">2</span>
+                    </button>
+                    <div class="user-dropdown">
+                        <div class="user-dropdown-toggle">
+                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="User">
+                            <span>Alex</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Welcome Section -->
+            <section class="welcome-section">
+                <div class="welcome-content">
+                    <h2>Welcome back, Alex!</h2>
+                    <p>Ready to continue planning your next adventure? You have 3 upcoming trips and 2 trip ideas saved.</p>
+                </div>
+                <a href="create-trip.html" class="btn-primary">
+                    <i class="fas fa-plus"></i> Plan New Trip
+                </a>
+            </section>
+
+            <!-- Upcoming Trips -->
+            <section class="section">
+                <div class="section-header">
+                    <h3>Upcoming Trips</h3>
+                    <a href="my-trips.html" class="view-all">View All</a>
+                </div>
+                <div class="trips-grid">
+                    <div class="trip-card">
+                        <div class="trip-image" style="background-image: url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')">
+                            <span class="trip-status">Upcoming</span>
+                            <div class="trip-dates">Jun 15 - 25, 2023</div>
+                        </div>
+                        <div class="trip-info">
+                            <h4>Italian Adventure</h4>
+                            <p>Rome, Florence, Venice</p>
+                            <div class="trip-stats">
+                                <div class="stat">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>3 Cities</span>
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>11 Days</span>
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <span>$2,800</span>
+                                </div>
+                            </div>
+                            <div class="trip-progress">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 65%"></div>
+                                </div>
+                                <span>65% planned</span>
+                            </div>
+                            <div class="trip-actions">
+                                <a href="itinerary-view.html" class="btn-outline">View</a>
+                                <a href="itinerary-builder.html" class="btn-primary">Continue Planning</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="trip-card">
+                        <div class="trip-image" style="background-image: url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')">
+                            <span class="trip-status">Upcoming</span>
+                            <div class="trip-dates">Aug 5 - 12, 2023</div>
+                        </div>
+                        <div class="trip-info">
+                            <h4>Paris Getaway</h4>
+                            <p>Paris, Versailles</p>
+                            <div class="trip-stats">
+                                <div class="stat">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>2 Cities</span>
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>8 Days</span>
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <span>$1,900</span>
+                                </div>
+                            </div>
+                            <div class="trip-progress">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 40%"></div>
+                                </div>
+                                <span>40% planned</span>
+                            </div>
+                            <div class="trip-actions">
+                                <a href="itinerary-view.html" class="btn-outline">View</a>
+                                <a href="itinerary-builder.html" class="btn-primary">Continue Planning</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="trip-card">
+                        <div class="trip-image" style="background-image: url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')">
+                            <span class="trip-status">Planning</span>
+                            <div class="trip-dates">Dec 20 - 30, 2023</div>
+                        </div>
+                        <div class="trip-info">
+                            <h4>Japan Winter Trip</h4>
+                            <p>Tokyo, Kyoto, Osaka</p>
+                            <div class="trip-stats">
+                                <div class="stat">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>3 Cities</span>
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>11 Days</span>
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <span>$3,200</span>
+                                </div>
+                            </div>
+                            <div class="trip-progress">
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: 20%"></div>
+                                </div>
+                                <span>20% planned</span>
+                            </div>
+                            <div class="trip-actions">
+                                <a href="itinerary-view.html" class="btn-outline">View</a>
+                                <a href="itinerary-builder.html" class="btn-primary">Start Planning</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Stats & Recommendations -->
+            <div class="dashboard-grid">
+                <!-- Quick Stats -->
+                <section class="card">
+                    <h3>Your Travel Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-suitcase"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>5</h4>
+                                <p>Total Trips</p>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>12</h4>
+                                <p>Cities Visited</p>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-plane"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>42</h4>
+                                <p>Activities Done</p>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h4>$8,750</h4>
+                                <p>Total Spent</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Budget Overview -->
+                <section class="card">
+                    <div class="card-header">
+                        <h3>Budget Overview</h3>
+                        <a href="budget.html" class="btn-text">Details</a>
+                    </div>
+                    <div class="budget-summary">
+                        <div class="budget-total">
+                            <h4>$7,900</h4>
+                            <p>Total for upcoming trips</p>
+                        </div>
+                        <div class="budget-breakdown">
+                            <div class="budget-item">
+                                <div class="budget-label">
+                                    <span class="budget-color" style="background-color: #4361ee;"></span>
+                                    <span>Accommodation</span>
+                                </div>
+                                <span class="budget-amount">$3,200</span>
+                            </div>
+                            <div class="budget-item">
+                                <div class="budget-label">
+                                    <span class="budget-color" style="background-color: #4cc9f0;"></span>
+                                    <span>Transportation</span>
+                                </div>
+                                <span class="budget-amount">$1,800</span>
+                            </div>
+                            <div class="budget-item">
+                                <div class="budget-label">
+                                    <span class="budget-color" style="background-color: #3a0ca3;"></span>
+                                    <span>Activities</span>
+                                </div>
+                                <span class="budget-amount">$1,500</span>
+                            </div>
+                            <div class="budget-item">
+                                <div class="budget-label">
+                                    <span class="budget-color" style="background-color: #7209b7;"></span>
+                                    <span>Food & Dining</span>
+                                </div>
+                                <span class="budget-amount">$1,400</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recommended Destinations -->
+                <section class="card">
+                    <div class="card-header">
+                        <h3>Recommended For You</h3>
+                        <a href="city-search.html" class="btn-text">Explore More</a>
+                    </div>
+                    <div class="destinations-list">
+                        <div class="destination-item">
+                            <div class="destination-info">
+                                <h4>Bali, Indonesia</h4>
+                                <p>Beaches · Culture · Adventure</p>
+                                <div class="destination-meta">
+                                    <span><i class="fas fa-dollar-sign"></i> Moderate</span>
+                                    <span><i class="fas fa-sun"></i> 28°C</span>
+                                </div>
+                            </div>
+                            <a href="city-search.html#bali" class="btn-icon">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                        </div>
+                        <div class="destination-item">
+                            <div class="destination-info">
+                                <h4>Reykjavik, Iceland</h4>
+                                <p>Nature · Northern Lights · Hot Springs</p>
+                                <div class="destination-meta">
+                                    <span><i class="fas fa-dollar-sign"></i> Expensive</span>
+                                    <span><i class="fas fa-temperature-low"></i> 5°C</span>
+                                </div>
+                            </div>
+                            <a href="city-search.html#reykjavik" class="btn-icon">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                        </div>
+                        <div class="destination-item">
+                            <div class="destination-info">
+                                <h4>Lisbon, Portugal</h4>
+                                <p>History · Food · Architecture</p>
+                                <div class="destination-meta">
+                                    <span><i class="fas fa-dollar-sign"></i> Affordable</span>
+                                    <span><i class="fas fa-sun"></i> 22°C</span>
+                                </div>
+                            </div>
+                            <a href="city-search.html#lisbon" class="btn-icon">
+                                <i class="fas fa-plus"></i>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recent Activity -->
+                <section class="card">
+                    <div class="card-header">
+                        <h3>Recent Activity</h3>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-plus-circle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p>Added <strong>Colosseum Tour</strong> to Italian Adventure</p>
+                                <span class="activity-time">2 hours ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-share-alt"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p>Shared <strong>Paris Getaway</strong> with Sarah</p>
+                                <span class="activity-time">Yesterday</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p>Explored activities in <strong>Tokyo, Japan</strong></p>
+                                <span class="activity-time">2 days ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-plane"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p>Booked flights for <strong>Italian Adventure</strong></p>
+                                <span class="activity-time">3 days ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Mobile sidebar toggle
+        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+        
+        // Notification dropdown (simplified for HTML/CSS)
+        document.querySelector('.notification-btn').addEventListener('click', function() {
+            alert('Notification dropdown would appear here with backend integration');
+        });
+        
+        // User dropdown (simplified for HTML/CSS)
+        document.querySelector('.user-dropdown-toggle').addEventListener('click', function() {
+            alert('User dropdown would appear here with backend integration');
+        });
+    </script>
+</body>
+</html>
