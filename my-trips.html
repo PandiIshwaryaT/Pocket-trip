@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Trips | Pocket-Trip</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .my-trips-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .my-trips-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .my-trips-header h1 {
+            color: var(--secondary-color);
+            font-size: 2.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .filter-btn {
+            background-color: white;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius-sm);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary-color);
+        }
+
+        .filter-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: var(--shadow-hover);
+            border-radius: var(--border-radius-sm);
+            z-index: 100;
+            padding: 0.5rem 0;
+        }
+
+        .filter-dropdown-content.show {
+            display: block;
+        }
+
+        .filter-option {
+            padding: 0.8rem 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-option:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .filter-option.active {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .filter-option input {
+            margin-right: 8px;
+        }
+
+        .trip-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-icon.upcoming {
+            background-color: #4361ee;
+        }
+
+        .stat-icon.ongoing {
+            background-color: #4cc9f0;
+        }
+
+        .stat-icon.completed {
+            background-color: #4CAF50;
+        }
+
+        .stat-icon.draft {
+            background-color: #9c27b0;
+        }
+
+        .stat-info h3 {
+            font-size: 2rem;
+            margin-bottom: 0.2rem;
+            color: var(--secondary-color);
+        }
+
+        .stat-info p {
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+        }
+
+        .trips-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .trip-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .trip-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .trip-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .trip-badge.upcoming {
+            background-color: rgba(67, 97, 238, 0.9);
+            color: white;
+        }
+
+        .trip-badge.ongoing {
+            background-color: rgba(76, 201, 240, 0.9);
+            color: white;
+        }
+
+        .trip-badge.completed {
+            background-color: rgba(76, 175, 80, 0.9);
+            color: white;
+        }
+
+        .trip-badge.draft {
+            background-color: rgba(156, 39, 176, 0.9);
+            color: white;
+        }
+
+        .trip-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .trip-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.1));
+        }
+
+        .trip-content {
+            padding: 1.5rem;
+        }
+
+        .trip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .trip-title h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .trip-dates {
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+        }
+
+        .trip-menu {
+            position: relative;
+        }
+
+        .trip-menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--gray-medium);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .trip-menu-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--dark-color);
+        }
+
+        .trip-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: var(--shadow-hover);
+            border-radius: var(--border-radius-sm);
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .trip-dropdown.show {
+            display: block;
+        }
+
+        .trip-dropdown a {
+            display: block;
+            padding: 0.8rem 1rem;
+            color: var(--dark-color);
+            transition: var(--transition);
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .trip-dropdown a:last-child {
+            border-bottom: none;
+        }
+
+        .trip-dropdown a:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+            color: var(--primary-color);
+        }
+
+        .trip-dropdown a.delete {
+            color: var(--danger-color);
+        }
+
+        .trip-dropdown a.delete:hover {
+            background-color: rgba(244, 67, 54, 0.1);
+        }
+
+        .trip-destinations {
+            color: var(--gray-dark);
+            margin-bottom: 1.2rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .trip-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.2rem;
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+        }
+
+        .trip-progress {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .progress-label {
+            color: var(--gray-dark);
+        }
+
+        .progress-percentage {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: var(--gray-light);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .trip-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .trip-actions .btn-outline,
+        .trip-actions .btn-primary {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .no-trips {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .no-trips-icon {
+            font-size: 4rem;
+            color: var(--gray-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .no-trips h3 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .no-trips p {
+            color: var(--gray-medium);
+            max-width: 500px;
+            margin: 0 auto 2rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+        }
+
+        .pagination-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--gray-light);
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .pagination-btn:hover:not(.disabled) {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .pagination-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .trips-container {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .my-trips-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-dropdown {
+                align-self: flex-start;
+            }
+
+            .trip-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .trips-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .trip-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .trip-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-globe-americas"></i>
+                    <h1>Pocket-Trip</h1>
+                </a>
+                <ul class="nav-menu">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="my-trips.html" class="active">My Trips</a></li>
+                    <li><a href="create-trip.html">Create Trip</a></li>
+                    <li><a href="city-search.html">Explore</a></li>
+                    <li><a href="profile.html" class="btn-outline">Profile</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="my-trips-container">
+            <div class="my-trips-header">
+                <h1>My Travel Plans</h1>
+                <div class="header-actions">
+                    <a href="create-trip.html" class="btn-primary">
+                        <i class="fas fa-plus"></i> New Trip
+                    </a>
+                    <div class="filter-dropdown">
+                        <button class="filter-btn">
+                            <i class="fas fa-filter"></i>
+                            Filter by Status
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="filter-dropdown-content" id="filterDropdown">
+                            <div class="filter-option active" data-filter="all">
+                                <i class="fas fa-globe"></i>
+                                All Trips
+                            </div>
+                            <div class="filter-option" data-filter="upcoming">
+                                <i class="fas fa-calendar-check"></i>
+                                Upcoming
+                            </div>
+                            <div class="filter-option" data-filter="ongoing">
+                                <i class="fas fa-plane"></i>
+                                Ongoing
+                            </div>
+                            <div class="filter-option" data-filter="completed">
+                                <i class="fas fa-check-circle"></i>
+                                Completed
+                            </div>
+                            <div class="filter-option" data-filter="draft">
+                                <i class="fas fa-edit"></i>
+                                Drafts
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trip Statistics -->
+            <div class="trip-stats">
+                <div class="stat-card">
+                    <div class="stat-icon upcoming">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>5</h3>
+                        <p>Upcoming Trips</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon ongoing">
+                        <i class="fas fa-plane"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>1</h3>
+                        <p>Ongoing Trips</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon completed">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>8</h3>
+                        <p>Completed Trips</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon draft">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>3</h3>
+                        <p>Trip Drafts</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trips Grid -->
+            <div class="trips-container" id="tripsContainer">
+                <!-- Trip Card 1 -->
+                <div class="trip-card" data-status="upcoming">
+                    <div class="trip-badge upcoming">Upcoming</div>
+                    <div class="trip-image" style="background-image: url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')"></div>
+                    <div class="trip-content">
+                        <div class="trip-header">
+                            <div class="trip-title">
+                                <h3>Italian Adventure</h3>
+                                <div class="trip-dates">Jun 15 - 25, 2023</div>
+                            </div>
+                            <div class="trip-menu">
+                                <button class="trip-menu-btn">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="trip-dropdown">
+                                    <a href="itinerary-view.html">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a href="itinerary-builder.html">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a href="share-trip.html">
+                                        <i class="fas fa-share"></i> Share
+                                    </a>
+                                    <a href="#" class="delete" onclick="confirmDelete('Italian Adventure')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="trip-destinations">
+                            <i class="fas fa-map-marker-alt"></i> Rome, Florence, Venice
+                        </div>
+                        <div class="trip-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i> 11 days
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-dollar-sign"></i> $2,800
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-users"></i> 2 travelers
+                            </div>
+                        </div>
+                        <div class="trip-progress">
+                            <div class="progress-info">
+                                <span class="progress-label">Planning Progress</span>
+                                <span class="progress-percentage">65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <div class="trip-actions">
+                            <a href="itinerary-view.html" class="btn-outline">View Details</a>
+                            <a href="itinerary-builder.html" class="btn-primary">Continue Planning</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trip Card 2 -->
+                <div class="trip-card" data-status="ongoing">
+                    <div class="trip-badge ongoing">Ongoing</div>
+                    <div class="trip-image" style="background-image: url('https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')"></div>
+                    <div class="trip-content">
+                        <div class="trip-header">
+                            <div class="trip-title">
+                                <h3>Barcelona Escape</h3>
+                                <div class="trip-dates">Now - Jun 10, 2023</div>
+                            </div>
+                            <div class="trip-menu">
+                                <button class="trip-menu-btn">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="trip-dropdown">
+                                    <a href="itinerary-view.html">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a href="itinerary-builder.html">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a href="share-trip.html">
+                                        <i class="fas fa-share"></i> Share
+                                    </a>
+                                    <a href="#" class="delete" onclick="confirmDelete('Barcelona Escape')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="trip-destinations">
+                            <i class="fas fa-map-marker-alt"></i> Barcelona, Costa Brava
+                        </div>
+                        <div class="trip-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i> 7 days
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-dollar-sign"></i> $1,950
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-users"></i> Solo
+                            </div>
+                        </div>
+                        <div class="trip-progress">
+                            <div class="progress-info">
+                                <span class="progress-label">Trip Progress</span>
+                                <span class="progress-percentage">40%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        <div class="trip-actions">
+                            <a href="itinerary-view.html" class="btn-outline">View Details</a>
+                            <a href="itinerary-builder.html" class="btn-primary">Update Trip</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trip Card 3 -->
+                <div class="trip-card" data-status="upcoming">
+                    <div class="trip-badge upcoming">Upcoming</div>
+                    <div class="trip-image" style="background-image: url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')"></div>
+                    <div class="trip-content">
+                        <div class="trip-header">
+                            <div class="trip-title">
+                                <h3>Paris Getaway</h3>
+                                <div class="trip-dates">Aug 5 - 12, 2023</div>
+                            </div>
+                            <div class="trip-menu">
+                                <button class="trip-menu-btn">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="trip-dropdown">
+                                    <a href="itinerary-view.html">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a href="itinerary-builder.html">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a href="share-trip.html">
+                                        <i class="fas fa-share"></i> Share
+                                    </a>
+                                    <a href="#" class="delete" onclick="confirmDelete('Paris Getaway')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="trip-destinations">
+                            <i class="fas fa-map-marker-alt"></i> Paris, Versailles
+                        </div>
+                        <div class="trip-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i> 8 days
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-dollar-sign"></i> $1,900
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-users"></i> 2 travelers
+                            </div>
+                        </div>
+                        <div class="trip-progress">
+                            <div class="progress-info">
+                                <span class="progress-label">Planning Progress</span>
+                                <span class="progress-percentage">40%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        <div class="trip-actions">
+                            <a href="itinerary-view.html" class="btn-outline">View Details</a>
+                            <a href="itinerary-builder.html" class="btn-primary">Continue Planning</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trip Card 4 -->
+                <div class="trip-card" data-status="completed">
+                    <div class="trip-badge completed">Completed</div>
+                    <div class="trip-image" style="background-image: url('https://images.unsplash.com/photo-1534351590666-13e3e96b5017?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')"></div>
+                    <div class="trip-content">
+                        <div class="trip-header">
+                            <div class="trip-title">
+                                <h3>Greek Islands Cruise</h3>
+                                <div class="trip-dates">May 1 - 10, 2023</div>
+                            </div>
+                            <div class="trip-menu">
+                                <button class="trip-menu-btn">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="trip-dropdown">
+                                    <a href="itinerary-view.html">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a href="itinerary-builder.html">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a href="share-trip.html">
+                                        <i class="fas fa-share"></i> Share
+                                    </a>
+                                    <a href="#" class="delete" onclick="confirmDelete('Greek Islands Cruise')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="trip-destinations">
+                            <i class="fas fa-map-marker-alt"></i> Athens, Mykonos, Santorini
+                        </div>
+                        <div class="trip-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i> 10 days
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-dollar-sign"></i> $3,200
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-users"></i> 4 travelers
+                            </div>
+                        </div>
+                        <div class="trip-progress">
+                            <div class="progress-info">
+                                <span class="progress-label">Trip Completion</span>
+                                <span class="progress-percentage">100%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="trip-actions">
+                            <a href="itinerary-view.html" class="btn-outline">View Memories</a>
+                            <a href="share-trip.html" class="btn-primary">Share Experience</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trip Card 5 -->
+                <div class="trip-card" data-status="draft">
+                    <div class="trip-badge draft">Draft</div>
+                    <div class="trip-image" style="background-image: url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80')"></div>
+                    <div class="trip-content">
+                        <div class="trip-header">
+                            <div class="trip-title">
+                                <h3>Japan Winter Trip</h3>
+                                <div class="trip-dates">Dec 20 - 30, 2023</div>
+                            </div>
+                            <div class="trip-menu">
+                                <button class="trip-menu-btn">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="trip-dropdown">
+                                    <a href="itinerary-view.html">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <a href="itinerary-builder.html">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a href="share-trip.html">
+                                        <i class="fas fa-share"></i> Share
+                                    </a>
+                                    <a href="#" class="delete" onclick="confirmDelete('Japan Winter Trip')">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="trip-destinations">
+                            <i class="fas fa-map-marker-alt"></i> Tokyo, Kyoto, Osaka
+                        </div>
+                        <div class="trip-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i> 11 days
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-dollar-sign"></i> $3,200
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-users"></i> 2 travelers
+                            </div>
+                        </div>
+                        <div class="trip-progress">
+                            <div class="progress-info">
+                                <span class="progress-label">Planning Progress</span>
+                                <span class="progress-percentage">20%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 20%"></div>
+                            </div>
+                        </div>
+                        <div class="trip-actions">
+                            <a href="itinerary-view.html" class="btn-outline">View Details</a>
+                            <a href="itinerary-builder.html" class="btn-primary">Start Planning</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Trips State (hidden by default) -->
+            <div class="no-trips" id="noTrips" style="display: none;">
+                <div class="no-trips-icon">
+                    <i class="fas fa-suitcase"></i>
+                </div>
+                <h3>No trips found</h3>
+                <p>You haven't created any trips yet, or no trips match your current filter. Start planning your first adventure!</p>
+                <a href="create-trip.html" class="btn-primary">
+                    <i class="fas fa-plus"></i> Plan Your First Trip
+                </a>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <button class="pagination-btn disabled">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="page-numbers">
+                    <button class="pagination-btn active">1</button>
+                    <button class="pagination-btn">2</button>
+                    <button class="pagination-btn">3</button>
+                </div>
+                <button class="pagination-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.hamburger').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+        // Filter dropdown
+        const filterBtn = document.querySelector('.filter-btn');
+        const filterDropdown = document.getElementById('filterDropdown');
+        const filterOptions = document.querySelectorAll('.filter-option');
+        const tripsContainer = document.getElementById('tripsContainer');
+        const tripCards = document.querySelectorAll('.trip-card');
+        const noTrips = document.getElementById('noTrips');
+
+        filterBtn.addEventListener('click', function() {
+            filterDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!filterBtn.contains(event.target) && !filterDropdown.contains(event.target)) {
+                filterDropdown.classList.remove('show');
+            }
+        });
+
+        // Filter trips by status
+        filterOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const filter = this.dataset.filter;
+                
+                // Update active filter
+                filterOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filter trips
+                let visibleTrips = 0;
+                
+                tripCards.forEach(card => {
+                    if (filter === 'all' || card.dataset.status === filter) {
+                        card.style.display = 'block';
+                        visibleTrips++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Show/hide no trips message
+                if (visibleTrips === 0) {
+                    tripsContainer.style.display = 'none';
+                    noTrips.style.display = 'block';
+                } else {
+                    tripsContainer.style.display = 'grid';
+                    noTrips.style.display = 'none';
+                }
+                
+                // Close dropdown
+                filterDropdown.classList.remove('show');
+            });
+        });
+
+        // Trip menu dropdowns
+        document.querySelectorAll('.trip-menu-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const dropdown = this.nextElementSibling;
+                
+                // Close all other dropdowns
+                document.querySelectorAll('.trip-dropdown.show').forEach(d => {
+                    if (d !== dropdown) d.classList.remove('show');
+                });
+                
+                dropdown.classList.toggle('show');
+            });
+        });
+
+        // Close dropdowns when clicking elsewhere
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.trip-dropdown.show').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+        });
+
+        // Delete trip confirmation
+        function confirmDelete(tripName) {
+            if (confirm(`Are you sure you want to delete "${tripName}"? This action cannot be undone.`)) {
+                alert(`Trip "${tripName}" deleted successfully.`);
+                // In a real app, you would make an API call to delete the trip
+                // and then remove it from the DOM
+            }
+            return false;
+        }
+
+        // Pagination buttons
+        document.querySelectorAll('.pagination-btn:not(.disabled)').forEach(button => {
+            button.addEventListener('click', function() {
+                if (this.classList.contains('active')) return;
+                
+                // Update active page
+                document.querySelectorAll('.pagination-btn.active').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                if (!this.querySelector('i')) {
+                    this.classList.add('active');
+                }
+                
+                // In a real app, you would load the corresponding page of trips
+                alert('Loading more trips...');
+            });
+        });
+    </script>
+</body>
+</html>

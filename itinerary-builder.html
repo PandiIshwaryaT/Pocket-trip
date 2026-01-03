@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itinerary Builder | Pocket-Trip</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .itinerary-builder-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .builder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .trip-info-header h1 {
+            color: var(--secondary-color);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .trip-meta-header {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--gray-medium);
+            font-size: 0.95rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .builder-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray-light);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .builder-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--gray-medium);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .builder-tab.active {
+            color: var(--primary-color);
+        }
+
+        .builder-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+
+        .builder-tab:hover:not(.active) {
+            color: var(--dark-color);
+        }
+
+        .builder-content {
+            display: none;
+        }
+
+        .builder-content.active {
+            display: block;
+        }
+
+        /* Overview Tab Styles */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .timeline-view {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-header h2 {
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+        }
+
+        .view-toggle {
+            display: flex;
+            background-color: var(--gray-light);
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+        }
+
+        .view-toggle-btn {
+            padding: 8px 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .view-toggle-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .timeline-days {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .timeline-day {
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .day-header {
+            background-color: rgba(67, 97, 238, 0.05);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .day-header h3 {
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        .day-date {
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+        }
+
+        .day-content {
+            padding: 1.5rem;
+            display: none;
+        }
+
+        .day-content.expanded {
+            display: block;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+        }
+
+        .activity-item:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.02);
+        }
+
+        .activity-time {
+            min-width: 80px;
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+            color: var(--dark-color);
+        }
+
+        .activity-description {
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--gray-medium);
+        }
+
+        .activity-cost {
+            color: var(--success-color);
+            font-weight: 500;
+        }
+
+        .activity-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .activity-btn {
+            background: none;
+            border: none;
+            color: var(--gray-medium);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .activity-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--dark-color);
+        }
+
+        .add-activity-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: 1px dashed var(--gray-medium);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            width: 100%;
+            margin-top: 1rem;
+            cursor: pointer;
+            color: var(--gray-medium);
+            transition: var(--transition);
+        }
+
+        .add-activity-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.02);
+        }
+
+        /* Side Panel */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .panel-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-card h3 {
+            color: var(--secondary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .destination-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .destination-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius-sm);
+            transition: var(--transition);
+        }
+
+        .destination-item:hover {
+            border-color: var(--primary-color);
+        }
+
+        .destination-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(67, 97, 238, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .destination-info {
+            flex: 1;
+        }
+
+        .destination-name {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+
+        .destination-dates {
+            font-size: 0.85rem;
+            color: var(--gray-medium);
+        }
+
+        .destination-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .add-destination-panel {
+            text-align: center;
+        }
+
+        .add-destination-panel p {
+            color: var(--gray-medium);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Stops Tab Styles */
+        .stops-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .stops-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .stops-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stop-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .stop-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.1);
+        }
+
+        .stop-item.dragging {
+            opacity: 0.5;
+            border-style: dashed;
+        }
+
+        .stop-handle {
+            color: var(--gray-medium);
+            cursor: move;
+            padding: 5px;
+        }
+
+        .stop-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(67, 97, 238, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .stop-info {
+            flex: 1;
+        }
+
+        .stop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .stop-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+
+        .stop-dates {
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+        }
+
+        .stop-details {
+            color: var(--gray-dark);
+            margin-bottom: 0.8rem;
+        }
+
+        .stop-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--gray-medium);
+        }
+
+        .stop-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .add-stop-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        .add-stop-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Activities Tab Styles */
+        .activities-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .activities-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .activity-card {
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .activity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .activity-image {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .activity-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .activity-content {
+            padding: 1.5rem;
+        }
+
+        .activity-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .activity-card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+        }
+
+        .activity-price {
+            color: var(--success-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .activity-card-description {
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .activity-card-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--gray-medium);
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-card-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .add-to-day-btn {
+            flex: 1;
+        }
+
+        /* Transport Tab Styles */
+        .transport-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .transport-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .transport-card {
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .transport-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        .transport-card.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .transport-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .transport-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+        }
+
+        .transport-details {
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .transport-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--gray-dark);
+        }
+
+        .transport-cost {
+            font-weight: 600;
+            color: var(--success-color);
+        }
+
+        .transport-form {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-light);
+        }
+
+        /* Notes Tab Styles */
+        .notes-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .notes-editor {
+            margin-bottom: 2rem;
+        }
+
+        .notes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .note-item {
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .note-title {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .note-date {
+            color: var(--gray-medium);
+            font-size: 0.85rem;
+        }
+
+        .note-content {
+            color: var(--gray-dark);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .note-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .note-tag {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .floating-actions {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .floating-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+            transition: var(--transition);
+        }
+
+        .floating-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(67, 97, 238, 0.4);
+        }
+
+        .floating-btn.secondary {
+            background-color: var(--accent-color);
+        }
+
+        @media (max-width: 1200px) {
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .builder-header {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .activities-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .transport-options {
+                grid-template-columns: 1fr;
+            }
+
+            .floating-actions {
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            .floating-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .trip-meta-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .stop-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stop-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .stop-meta {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-globe-americas"></i>
+                    <h1>Pocket-Trip</h1>
+                </a>
+                <ul class="nav-menu">
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="my-trips.html">My Trips</a></li>
+                    <li><a href="itinerary-builder.html" class="active">Itinerary Builder</a></li>
+                    <li><a href="city-search.html">Explore</a></li>
+                    <li><a href="profile.html" class="btn-outline">Profile</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="itinerary-builder-container">
+            <!-- Header -->
+            <div class="builder-header">
+                <div class="trip-info-header">
+                    <h1>Italian Adventure</h1>
+                    <div class="trip-meta-header">
+                        <span><i class="fas fa-calendar"></i> Jun 15 - 25, 2023</span>
+                        <span><i class="fas fa-map-marker-alt"></i> Rome, Florence, Venice</span>
+                        <span><i class="fas fa-dollar-sign"></i> $2,800 estimated</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <a href="itinerary-view.html" class="btn-outline">
+                        <i class="fas fa-eye"></i> Preview
+                    </a>
+                    <a href="budget.html" class="btn-outline">
+                        <i class="fas fa-chart-pie"></i> Budget
+                    </a>
+                    <a href="share-trip.html" class="btn-primary">
+                        <i class="fas fa-share-alt"></i> Share Trip
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="builder-tabs">
+                <button class="builder-tab active" data-tab="overview">
+                    <i class="fas fa-calendar-day"></i> Day Overview
+                </button>
+                <button class="builder-tab" data-tab="stops">
+                    <i class="fas fa-map-marked-alt"></i> Destinations
+                </button>
+                <button class="builder-tab" data-tab="activities">
+                    <i class="fas fa-binoculars"></i> Activities
+                </button>
+                <button class="builder-tab" data-tab="transport">
+                    <i class="fas fa-plane"></i> Transport
+                </button>
+                <button class="builder-tab" data-tab="notes">
+                    <i class="fas fa-sticky-note"></i> Notes
+                </button>
+            </div>
+
+            <!-- Overview Tab -->
+            <div class="builder-content active" id="overview-tab">
+                <div class="overview-grid">
+                    <!-- Timeline View -->
+                    <div class="timeline-view">
+                        <div class="timeline-header">
+                            <h2>Day-by-Day Itinerary</h2>
+                            <div class="view-toggle">
+                                <button class="view-toggle-btn active">Timeline</button>
+                                <button class="view-toggle-btn">Calendar</button>
+                                <button class="view-toggle-btn">List</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Day 1 -->
+                        <div class="timeline-days">
+                            <div class="timeline-day">
+                                <div class="day-header" onclick="toggleDay(this)">
+                                    <h3>Day 1: Arrival in Rome</h3>
+                                    <div class="day-date">Thursday, Jun 15</div>
+                                </div>
+                                <div class="day-content expanded">
+                                    <div class="activity-list">
+                                        <div class="activity-item">
+                                            <div class="activity-time">2:00 PM</div>
+                                            <div class="activity-details">
+                                                <div class="activity-title">Arrival at FCO Airport</div>
+                                                <div class="activity-description">Flight from New York (JFK) to Rome (FCO)</div>
+                                                <div class="activity-meta">
+                                                    <span><i class="fas fa-plane"></i> Flight</span>
+                                                    <span><i class="fas fa-clock"></i> 8h 30m</span>
+                                                    <span class="activity-cost">$650</span>
+                                                </div>
+                                            </div>
+                                            <div class="activity-actions">
+                                                <button class="activity-btn" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="activity-btn" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="activity-item">
+                                            <div class="activity-time">4:30 PM</div>
+                                            <div class="activity-details">
+                                                <div class="activity-title">Transfer to Hotel</div>
+                                                <div class="activity-description">Taxi from airport to city center</div>
+                                                <div class="activity-meta">
+                                                    <span><i class="fas fa-car"></i> Taxi</span>
+                                                    <span><i class="fas fa-clock"></i> 45m</span>
+                                                    <span class="activity-cost">$50</span>
+                                                </div>
+                                            </div>
+                                            <div class="activity-actions">
+                                                <button class="activity-btn" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="activity-btn" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="activity-item">
+                                            <div class="activity-time">7:00 PM</div>
+                                            <div class="activity-details">
+                                                <div class="activity-title">Welcome Dinner</div>
+                                                <div class="activity-description">Traditional Italian dinner at Trattoria da Enzo</div>
+                                                <div class="activity-meta">
+                                                    <span><i class="fas fa-utensils"></i> Dinner</span>
+                                                    <span><i class="fas fa-clock"></i> 2h</span>
+                                                    <span class="activity-cost">$80</span>
+                                                </div>
+                                            </div>
+                                            <div class="activity-actions">
+                                                <button class="activity-btn" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="activity-btn" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="add-activity-btn">
+                                        <i class="fas fa-plus"></i> Add Activity
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Day 2 -->
+                            <div class="timeline-day">
+                                <div class="day-header" onclick="toggleDay(this)">
+                                    <h3>Day 2: Ancient Rome Tour</h3>
+                                    <div class="day-date">Friday, Jun 16</div>
+                                </div>
+                                <div class="day-content">
+                                    <div class="activity-list">
+                                        <div class="activity-item">
+                                            <div class="activity-time">9:00 AM</div>
+                                            <div class="activity-details">
+                                                <div class="activity-title">Colosseum Tour</div>
+                                                <div class="activity-description">Skip-the-line guided tour of Colosseum, Roman Forum & Palatine Hill</div>
+                                                <div class="activity-meta">
+                                                    <span><i class="fas fa-landmark"></i> Sightseeing</span>
+                                                    <span><i class="fas fa-clock"></i> 3h</span>
+                                                    <span class="activity-cost">$75</span>
+                                                </div>
+                                            </div>
+                                            <div class="activity-actions">
+                                                <button class="activity-btn" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="activity-btn" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="add-activity-btn">
+                                        <i class="fas fa-plus"></i> Add Activity
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Day 3 -->
+                            <div class="timeline-day">
+                                <div class="day-header" onclick="toggleDay(this)">
+                                    <h3>Day 3: Vatican City</h3>
+                                    <div class="day-date">Saturday, Jun 17</div>
+                                </div>
+                                <div class="day-content">
+                                    <div class="activity-list">
+                                        <div class="activity-item">
+                                            <div class="activity-time">10:00 AM</div>
+                                            <div class="activity-details">
+                                                <div class="activity-title">Vatican Museums & Sistine Chapel</div>
+                                                <div class="activity-description">Guided tour with early access</div>
+                                                <div class="activity-meta">
+                                                    <span><i class="fas fa-landmark"></i> Museum</span>
+                                                    <span><i class="fas fa-clock"></i> 4h</span>
+                                                    <span class="activity-cost">$90</span>
+                                                </div>
+                                            </div>
+                                            <div class="activity-actions">
+                                                <button class="activity-btn" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="activity-btn" title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="add-activity-btn">
+                                        <i class="fas fa-plus"></i> Add Activity
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Side Panel -->
+                    <div class="side-panel">
+                        <!-- Destinations -->
+                        <div class="panel-card">
+                            <h3>Destinations</h3>
+                            <div class="destination-list">
+                                <div class="destination-item">
+                                    <div class="destination-icon">
+                                        <i class="fas fa-archway"></i>
+                                    </div>
+                                    <div class="destination-info">
+                                        <div class="destination-name">Rome, Italy</div>
+                                        <div class="destination-dates">Jun 15 - 18 (3 nights)</div>
+                                    </div>
+                                    <div class="destination-actions">
+                                        <button class="activity-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="destination-item">
+                                    <div class="destination-icon">
+                                        <i class="fas fa-paint-brush"></i>
+                                    </div>
+                                    <div class="destination-info">
+                                        <div class="destination-name">Florence, Italy</div>
+                                        <div class="destination-dates">Jun 18 - 21 (3 nights)</div>
+                                    </div>
+                                    <div class="destination-actions">
+                                        <button class="activity-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="destination-item">
+                                    <div class="destination-icon">
+                                        <i class="fas fa-water"></i>
+                                    </div>
+                                    <div class="destination-info">
+                                        <div class="destination-name">Venice, Italy</div>
+                                        <div class="destination-dates">Jun 21 - 25 (4 nights)</div>
+                                    </div>
+                                    <div class="destination-actions">
+                                        <button class="activity-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="add-destination-panel">
+                                <p>Add more destinations to your trip</p>
+                                <a href="city-search.html" class="btn-outline">
+                                    <i class="fas fa-plus"></i> Add Destination
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Stats -->
+                        <div class="panel-card">
+                            <h3>Trip Progress</h3>
+                            <div style="margin-bottom: 1.5rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span>Planning Progress</span>
+                                    <span style="color: var(--primary-color); font-weight: 500;">65%</span>
+                                </div>
+                                <div class="progress-bar" style="height: 8px;">
+                                    <div class="progress" style="width: 65%;"></div>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--secondary-color);">7</div>
+                                    <div style="font-size: 0.9rem; color: var(--gray-medium);">Activities</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--secondary-color);">3</div>
+                                    <div style="font-size: 0.9rem; color: var(--gray-medium);">Destinations</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--secondary-color);">$1,245</div>
+                                    <div style="font-size: 0.9rem; color: var(--gray-medium);">Estimated Cost</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--secondary-color);">5</div>
+                                    <div style="font-size: 0.9rem; color: var(--gray-medium);">Days Planned</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stops Tab -->
+            <div class="builder-content" id="stops-tab">
+                <div class="stops-container">
+                    <div class="stops-header">
+                        <h2>Destinations & Stops</h2>
+                        <p>Manage the cities you'll visit and their durations</p>
+                    </div>
+                    
+                    <div class="stops-list" id="stopsList">
+                        <!-- Stop 1 -->
+                        <div class="stop-item" draggable="true">
+                            <div class="stop-handle">
+                                <i class="fas fa-grip-vertical"></i>
+                            </div>
+                            <div class="stop-icon">
+                                <i class="fas fa-archway"></i>
+                            </div>
+                            <div class="stop-info">
+                                <div class="stop-header">
+                                    <div>
+                                        <div class="stop-name">Rome, Italy</div>
+                                        <div class="stop-dates">Jun 15 - 18, 2023 (3 nights)</div>
+                                    </div>
+                                    <div class="stop-actions">
+                                        <button class="activity-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="activity-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="stop-details">
+                                    Capital of Italy, famous for ancient ruins, art, and cuisine.
+                                </div>
+                                <div class="stop-meta">
+                                    <span><i class="fas fa-hotel"></i> Hotel Roma</span>
+                                    <span><i class="fas fa-train"></i> Train from: N/A</span>
+                                    <span><i class="fas fa-train"></i> Train to: Florence</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stop 2 -->
+                        <div class="stop-item" draggable="true">
+                            <div class="stop-handle">
+                                <i class="fas fa-grip-vertical"></i>
+                            </div>
+                            <div class="stop-icon">
+                                <i class="fas fa-paint-brush"></i>
+                            </div>
+                            <div class="stop-info">
+                                <div class="stop-header">
+                                    <div>
+                                        <div class="stop-name">Florence, Italy</div>
+                                        <div class="stop-dates">Jun 18 - 21, 2023 (3 nights)</div>
+                                    </div>
+                                    <div class="stop-actions">
+                                        <button class="activity-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="activity-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="stop-details">
+                                    Renaissance art and architecture, including Michelangelo's David.
+                                </div>
+                                <div class="stop-meta">
+                                    <span><i class="fas fa-hotel"></i> Florence Palace</span>
+                                    <span><i class="fas fa-train"></i> Train from: Rome</span>
+                                    <span><i class="fas fa-train"></i> Train to: Venice</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stop 3 -->
+                        <div class="stop-item" draggable="true">
+                            <div class="stop-handle">
+                                <i class="fas fa-grip-vertical"></i>
+                            </div>
+                            <div class="stop-icon">
+                                <i class="fas fa-water"></i>
+                            </div>
+                            <div class="stop-info">
+                                <div class="stop-header">
+                                    <div>
+                                        <div class="stop-name">Venice, Italy</div>
+                                        <div class="stop-dates">Jun 21 - 25, 2023 (4 nights)</div>
+                                    </div>
+                                    <div class="stop-actions">
+                                        <button class="activity-btn">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="activity-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="stop-details">
+                                    Canals, gondolas, and historic architecture on the water.
+                                </div>
+                                <div class="stop-meta">
+                                    <span><i class="fas fa-hotel"></i> Canal View Hotel</span>
+                                    <span><i class="fas fa-train"></i> Train from: Florence</span>
+                                    <span><i class="fas fa-plane"></i> Flight to: Home</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="add-stop-section">
+                        <h3>Add New Stop</h3>
+                        <div class="add-stop-form">
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" placeholder="Search for a city...">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Arrival Date</label>
+                                <input type="date" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Departure Date</label>
+                                <input type="date" class="form-control">
+                            </div>
+                        </div>
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Stop
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activities Tab -->
+            <div class="builder-content" id="activities-tab">
+                <div class="activities-container">
+                    <div class="stops-header">
+                        <h2>Browse & Add Activities</h2>
+                        <p>Discover things to do in your destinations</p>
+                    </div>
+                    
+                    <div class="activities-filters">
+                        <div class="filter-group">
+                            <label class="form-label">Destination</label>
+                            <select class="form-control">
+                                <option>All Destinations</option>
+                                <option>Rome</option>
+                                <option>Florence</option>
+                                <option>Venice</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="form-label">Category</label>
+                            <select class="form-control">
+                                <option>All Categories</option>
+                                <option>Sightseeing</option>
+                                <option>Food & Drink</option>
+                                <option>Museums</option>
+                                <option>Outdoor</option>
+                                <option>Shopping</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="form-label">Price Range</label>
+                            <select class="form-control">
+                                <option>Any Price</option>
+                                <option>Free</option>
+                                <option>$ (Budget)</option>
+                                <option>$$ (Moderate)</option>
+                                <option>$$$ (Expensive)</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="form-label">Duration</label>
+                            <select class="form-control">
+                                <option>Any Duration</option>
+                                <option>Less than 1 hour</option>
+                                <option>1-3 hours</option>
+                                <option>Half day</option>
+                                <option>Full day</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="activities-grid">
+                        <!-- Activity 1 -->
+                        <div class="activity-card">
+                            <div class="activity-image" style="background-image: url('https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                                <div class="activity-badge">Sightseeing</div>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-card-header">
+                                    <div class="activity-card-title">Trevi Fountain</div>
+                                    <div class="activity-price">Free</div>
+                                </div>
+                                <div class="activity-card-description">
+                                    Iconic 18th-century fountain depicting Oceanus. Tradition says throwing a coin ensures a return to Rome.
+                                </div>
+                                <div class="activity-card-meta">
+                                    <span><i class="fas fa-clock"></i> 1-2 hours</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> Rome</span>
+                                </div>
+                                <div class="activity-card-actions">
+                                    <button class="btn-outline">Details</button>
+                                    <button class="btn-primary add-to-day-btn">Add to Day</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Activity 2 -->
+                        <div class="activity-card">
+                            <div class="activity-image" style="background-image: url('https://images.unsplash.com/photo-1543429258-5d4b4f2c73a3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                                <div class="activity-badge">Food Tour</div>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-card-header">
+                                    <div class="activity-card-title">Trastevere Food Tour</div>
+                                    <div class="activity-price">$85</div>
+                                </div>
+                                <div class="activity-card-description">
+                                    3-hour walking food tour through Rome's most authentic neighborhood, tasting pizza, pasta, gelato, and wine.
+                                </div>
+                                <div class="activity-card-meta">
+                                    <span><i class="fas fa-clock"></i> 3 hours</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> Rome</span>
+                                </div>
+                                <div class="activity-card-actions">
+                                    <button class="btn-outline">Details</button>
+                                    <button class="btn-primary add-to-day-btn">Add to Day</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Activity 3 -->
+                        <div class="activity-card">
+                            <div class="activity-image" style="background-image: url('https://images.unsplash.com/photo-1548013146-72479768bada?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
+                                <div class="activity-badge">Museum</div>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-card-header">
+                                    <div class="activity-card-title">Uffizi Gallery</div>
+                                    <div class="activity-price">$25</div>
+                                </div>
+                                <div class="activity-card-description">
+                                    One of the most important Italian museums, housing works by Botticelli, Michelangelo, Leonardo da Vinci, and Raphael.
+                                </div>
+                                <div class="activity-card-meta">
+                                    <span><i class="fas fa-clock"></i> 2-4 hours</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> Florence</span>
+                                </div>
+                                <div class="activity-card-actions">
+                                    <button class="btn-outline">Details</button>
+                                    <button class="btn-primary add-to-day-btn">Add to Day</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 3rem;">
+                        <a href="activity-search.html" class="btn-primary">
+                            <i class="fas fa-search"></i> Browse All Activities
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transport Tab -->
+            <div class="builder-content" id="transport-tab">
+                <div class="transport-container">
+                    <div class="stops-header">
+                        <h2>Transportation Between Cities</h2>
+                        <p>Plan how you'll travel between destinations</p>
+                    </div>
+                    
+                    <div class="transport-options">
+                        <!-- Option 1 -->
+                        <div class="transport-card selected">
+                            <div class="transport-icon">
+                                <i class="fas fa-train"></i>
+                            </div>
+                            <div class="transport-name">High-Speed Train</div>
+                            <div class="transport-details">
+                                Fast and comfortable travel between Italian cities. Best for city-center to city-center travel.
+                            </div>
+                            <div class="transport-meta">
+                                <span>Rome → Florence</span>
+                                <span class="transport-cost">$45</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Option 2 -->
+                        <div class="transport-card">
+                            <div class="transport-icon">
+                                <i class="fas fa-bus"></i>
+                            </div>
+                            <div class="transport-name">Bus</div>
+                            <div class="transport-details">
+                                Economical option with frequent departures. Takes longer than train but more affordable.
+                            </div>
+                            <div class="transport-meta">
+                                <span>Rome → Florence</span>
+                                <span class="transport-cost">$25</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Option 3 -->
+                        <div class="transport-card">
+                            <div class="transport-icon">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <div class="transport-name">Rental Car</div>
+                            <div class="transport-details">
+                                Maximum flexibility to explore areas outside cities. Includes parking and fuel costs.
+                            </div>
+                            <div class="transport-meta">
+                                <span>Rome → Florence</span>
+                                <span class="transport-cost">$85</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="transport-form">
+                        <h3>Add Custom Transportation</h3>
+                        <div class="add-stop-form">
+                            <div class="form-group">
+                                <label class="form-label">From</label>
+                                <select class="form-control">
+                                    <option>Rome, Italy</option>
+                                    <option>Florence, Italy</option>
+                                    <option>Venice, Italy</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">To</label>
+                                <select class="form-control">
+                                    <option>Florence, Italy</option>
+                                    <option>Rome, Italy</option>
+                                    <option>Venice, Italy</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Transport Type</label>
+                                <select class="form-control">
+                                    <option>Train</option>
+                                    <option>Bus</option>
+                                    <option>Flight</option>
+                                    <option>Car</option>
+                                    <option>Ferry</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Date & Time</label>
+                                <input type="datetime-local" class="form-control">
+                            </div>
+                        </div>
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Transport
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes Tab -->
+            <div class="builder-content" id="notes-tab">
+                <div class="notes-container">
+                    <div class="stops-header">
+                        <h2>Trip Notes & Reminders</h2>
+                        <p>Add important information, reminders, or ideas for your trip</p>
+                    </div>
+                    
+                    <div class="notes-editor">
+                        <div class="form-group">
+                            <label class="form-label">Add New Note</label>
+                            <input type="text" class="form-control" placeholder="Note title" style="margin-bottom: 1rem;">
+                            <textarea class="form-control" rows="4" placeholder="Enter your note here..."></textarea>
+                        </div>
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Note
+                        </button>
+                    </div>
+                    
+                    <div class="notes-list">
+                        <div class="note-item">
+                            <div class="note-header">
+                                <div class="note-title">Restaurant Reservations</div>
+                                <div class="note-date">Added: May 15, 2023</div>
+                            </div>
+                            <div class="note-content">
+                                Make reservations for:
+                                - La Pergola (Rome) - 3 months in advance
+                                - Osteria Francescana (Modena) - 6 months in advance
+                                - Harry's Bar (Venice) - 1 month in advance
+                            </div>
+                            <div class="note-tags">
+                                <span class="note-tag">Food</span>
+                                <span class="note-tag">Important</span>
+                            </div>
+                        </div>
+                        
+                        <div class="note-item">
+                            <div class="note-header">
+                                <div class="note-title">Packing List</div>
+                                <div class="note-date">Added: May 10, 2023</div>
+                            </div>
+                            <div class="note-content">
+                                - Comfortable walking shoes
+                                - Light jacket for evenings
+                                - Adapter for Italian outlets
+                                - Modest clothing for Vatican visit
+                                - Swimsuit for hotel pools
+                            </div>
+                            <div class="note-tags">
+                                <span class="note-tag">Packing</span>
+                                <span class="note-tag">Preparation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Actions -->
+    <div class="floating-actions">
+        <button class="floating-btn secondary" title="Save Draft">
+            <i class="fas fa-save"></i>
+        </button>
+        <button class="floating-btn" title="Add Activity" onclick="window.location.href='activity-search.html'">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.hamburger').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+        // Tab switching
+        document.querySelectorAll('.builder-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Update active tab
+                document.querySelectorAll('.builder-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = this.dataset.tab;
+                document.querySelectorAll('.builder-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+
+        // Toggle day expansion
+        function toggleDay(dayHeader) {
+            const dayContent = dayHeader.nextElementSibling;
+            dayContent.classList.toggle('expanded');
+            
+            // Rotate arrow icon if present
+            const icon = dayHeader.querySelector('.fas');
+            if (icon) {
+                icon.classList.toggle('fa-chevron-down');
+                icon.classList.toggle('fa-chevron-up');
+            }
+        }
+
+        // Add arrows to day headers
+        document.querySelectorAll('.day-header').forEach(header => {
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-chevron-down';
+            header.appendChild(icon);
+        });
+
+        // View toggle buttons
+        document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.view-toggle-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Drag and drop for stops
+        let draggedItem = null;
+
+        document.querySelectorAll('.stop-item').forEach(item => {
+            item.addEventListener('dragstart', function(e) {
+                draggedItem = this;
+                setTimeout(() => {
+                    this.classList.add('dragging');
+                }, 0);
+            });
+
+            item.addEventListener('dragend', function() {
+                this.classList.remove('dragging');
+                draggedItem = null;
+            });
+        });
+
+        const stopsList = document.getElementById('stopsList');
+        
+        stopsList.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            const afterElement = getDragAfterElement(stopsList, e.clientY);
+            const draggable = document.querySelector('.dragging');
+            
+            if (afterElement == null) {
+                stopsList.appendChild(draggable);
+            } else {
+                stopsList.insertBefore(draggable, afterElement);
+            }
+        });
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.stop-item:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        // Add activity buttons
+        document.querySelectorAll('.add-activity-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const day = this.closest('.day-content');
+                const activityList = day.querySelector('.activity-list');
+                
+                // In a real app, you would open a modal or form to add activity
+                alert('Add activity form would open here');
+            });
+        });
+
+        // Transport card selection
+        document.querySelectorAll('.transport-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.transport-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Add to day buttons for activities
+        document.querySelectorAll('.add-to-day-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // In a real app, you would show a modal to select which day to add to
+                alert('Select a day to add this activity');
+            });
+        });
+
+        // Save draft button
+        document.querySelector('.floating-btn.secondary').addEventListener('click', function() {
+            alert('Trip draft saved successfully!');
+        });
+    </script>
+</body>
+</html>
