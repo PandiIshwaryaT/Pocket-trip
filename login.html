@@ -4,10 +4,404 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Pocket-Trip</title>
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/auth.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4CAF50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --gray-light: #e9ecef;
+            --gray-medium: #adb5bd;
+            --gray-dark: #495057;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .auth-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 1200px;
+            width: 100%;
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Auth Header */
+        .auth-header {
+            grid-column: 1 / -1;
+            padding: 2rem;
+            text-align: center;
+            background-color: white;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .auth-header .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-header .logo i {
+            font-size: 1.8rem;
+        }
+
+        .auth-header .logo h1 {
+            font-size: 1.8rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .auth-header h2 {
+            font-size: 2.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .auth-header p {
+            color: var(--gray-dark);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Auth Card */
+        .auth-card {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gray-medium);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .auth-tab.active {
+            color: var(--primary-color);
+        }
+
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--gray-medium);
+            border-radius: var(--border-radius-sm);
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .password-input {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-medium);
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-check input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+
+        .forgot-password {
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .forgot-password:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            display: inline-block;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .auth-btn {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            color: var(--gray-medium);
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--gray-light);
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Social Auth */
+        .social-auth {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--gray-light);
+            background-color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .social-btn.google:hover {
+            background-color: #f8f9fa;
+            border-color: var(--gray-medium);
+        }
+
+        .social-btn.facebook {
+            background-color: #1877F2;
+            color: white;
+            border-color: #1877F2;
+        }
+
+        .social-btn.facebook:hover {
+            background-color: #166fe5;
+        }
+
+        /* Auth Footer */
+        .auth-footer {
+            text-align: center;
+            color: var(--gray-dark);
+        }
+
+        .auth-footer a {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Auth Image */
+        .auth-image {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .auth-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+        }
+
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 3rem 2rem 2rem;
+        }
+
+        .image-overlay h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .image-overlay p {
+            opacity: 0.9;
+        }
+
+        /* Error Messages */
+        .form-error {
+            color: var(--danger-color);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+            min-height: 1.2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .auth-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .auth-image {
+                display: none;
+            }
+            
+            .auth-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .auth-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .social-auth {
+                flex-direction: column;
+            }
+            
+            .auth-header {
+                padding: 1.5rem;
+            }
+            
+            body {
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="auth-container">
@@ -51,7 +445,7 @@
                             <input type="checkbox" id="remember-me">
                             <label for="remember-me">Remember me</label>
                         </div>
-                        <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
+                        <a href="#" class="forgot-password">Forgot Password?</a>
                     </div>
                     
                     <button type="submit" class="btn-primary auth-btn">Log In</button>
@@ -115,7 +509,7 @@
                     <div class="form-group">
                         <div class="form-check">
                             <input type="checkbox" id="terms" required>
-                            <label for="terms">I agree to the <a href="terms.html">Terms of Service</a> and <a href="privacy.html">Privacy Policy</a></label>
+                            <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
                         </div>
                     </div>
                     
@@ -192,17 +586,107 @@
             });
         });
         
-        // Form submission (demo only - would connect to backend in real app)
-        document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+        // Form validation and submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Login functionality would connect to backend. For demo, redirecting to dashboard.');
-            window.location.href = 'dashboard.html';
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const emailError = document.querySelector('#login-form .form-group:nth-child(1) .form-error');
+            const passwordError = document.querySelector('#login-form .form-group:nth-child(2) .form-error');
+            
+            // Reset errors
+            emailError.textContent = '';
+            passwordError.textContent = '';
+            
+            let isValid = true;
+            
+            // Basic validation
+            if (!email) {
+                emailError.textContent = 'Email is required';
+                isValid = false;
+            } else if (!email.includes('@')) {
+                emailError.textContent = 'Please enter a valid email';
+                isValid = false;
+            }
+            
+            if (!password) {
+                passwordError.textContent = 'Password is required';
+                isValid = false;
+            } else if (password.length < 6) {
+                passwordError.textContent = 'Password must be at least 6 characters';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Simulate login - in a real app, this would be an API call
+                alert('Login successful! Redirecting to dashboard...');
+                window.location.href = 'dashboard.html';
+            }
         });
         
-        document.getElementById('signupForm')?.addEventListener('submit', function(e) {
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Account creation functionality would connect to backend. For demo, redirecting to dashboard.');
-            window.location.href = 'dashboard.html';
+            
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const terms = document.getElementById('terms').checked;
+            
+            const nameError = document.querySelector('#signup-form .form-group:nth-child(1) .form-error');
+            const emailError = document.querySelector('#signup-form .form-group:nth-child(2) .form-error');
+            const passwordError = document.querySelector('#signup-form .form-group:nth-child(3) .form-error');
+            const confirmError = document.querySelector('#signup-form .form-group:nth-child(4) .form-error');
+            
+            // Reset errors
+            nameError.textContent = '';
+            emailError.textContent = '';
+            passwordError.textContent = '';
+            confirmError.textContent = '';
+            
+            let isValid = true;
+            
+            // Validation
+            if (!name) {
+                nameError.textContent = 'Name is required';
+                isValid = false;
+            }
+            
+            if (!email) {
+                emailError.textContent = 'Email is required';
+                isValid = false;
+            } else if (!email.includes('@')) {
+                emailError.textContent = 'Please enter a valid email';
+                isValid = false;
+            }
+            
+            if (!password) {
+                passwordError.textContent = 'Password is required';
+                isValid = false;
+            } else if (password.length < 6) {
+                passwordError.textContent = 'Password must be at least 6 characters';
+                isValid = false;
+            }
+            
+            if (!confirmPassword) {
+                confirmError.textContent = 'Please confirm your password';
+                isValid = false;
+            } else if (password !== confirmPassword) {
+                confirmError.textContent = 'Passwords do not match';
+                isValid = false;
+            }
+            
+            if (!terms) {
+                alert('You must agree to the terms and conditions');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Simulate signup - in a real app, this would be an API call
+                alert('Account created successfully! Welcome to Pocket-Trip. Redirecting to dashboard...');
+                window.location.href = 'dashboard.html';
+            }
         });
         
         // Check if URL has signup parameter
